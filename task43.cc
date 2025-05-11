@@ -1,8 +1,19 @@
 #include <iostream>
 #include <string>
 #include <vector>
-
+#include <checking.h>
 using namespace std;
+
+class RectangleWrapper {
+
+    public:
+     int value;
+     
+
+
+
+};
+
 
 int main() {
 

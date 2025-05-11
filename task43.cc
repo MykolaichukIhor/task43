@@ -64,7 +64,48 @@ int max_attempts = 100000; // 10,000 attempts
         }
         return true;
     }
+public:
 
+
+const vector<Solution>& get_solutions() const { return all_solutions; }
+    
+    PuzzleSolver(const vector<vector<string>>& m) : initial_matrix(m) {
+        // checking if the matrix is valid (no unknown chars)
+        for (const auto& row : m) {
+            for (const auto& cell : row) {
+                if (cell != "-" && cell != "0" && cell != "=") {
+                    try {
+                        int num = stoi(cell);
+                        if (num <= 0) {
+                            cerr << "Found negative number in the matrix. Abortion... " << cell << endl;
+                        }
+                    } catch (const invalid_argument&) {
+                        cerr << "Found unknown char in the matrix. Abortion..." << cell 
+                             << " It can be 0, - or any positive number)" << endl;
+                    } catch (const out_of_range&) {
+                        cerr << "The number in the matrix is too big! " << cell << endl;
+                    }
+                }
+            }
+        }
+
+        height = initial_matrix.size();
+        if (height > 0) width = initial_matrix[0].size();
+    }
+
+
+    void solve() {
+        Solution current;
+        current.current_matrix = initial_matrix;
+        backtrack(current, false);
+        
+        if (all_solutions.empty()) {
+            backtrack_with_guessing(current);
+        }
+        
+        cout << "Total backtrack calls: " << backtrack_calls << endl;
+        cout << "Total solution attempts: " << solution_attempts << endl;
+    }
 
 };
 

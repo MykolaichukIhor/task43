@@ -134,6 +134,74 @@ bool isCloseEnoughToShareSide(const Rectangle& rect1, const Rectangle& rect2) {
     return false;
 }
 
+bool hasCommonSideOrCorner(const Rectangle& rect1, const Rectangle& rect2) {
+    // 1. Перевірка на спільні кути
+    if (rect1.getTopLeft().x == rect2.getTopLeft().x && rect1.getTopLeft().y == rect2.getTopLeft().y) return true;
+    if (rect1.getTopLeft().x == rect2.getTopRight().x && rect1.getTopLeft().y == rect2.getTopRight().y) return true;
+    if (rect1.getTopLeft().x == rect2.getBottomLeft().x && rect1.getTopLeft().y == rect2.getBottomLeft().y) return true;
+    
+    if (rect1.getTopRight().x == rect2.getTopLeft().x && rect1.getTopRight().y == rect2.getTopLeft().y) return true;
+    if (rect1.getTopRight().x == rect2.getTopRight().x && rect1.getTopRight().y == rect2.getTopRight().y) return true;
+    if (rect1.getTopRight().x == rect2.getBottomRight().x && rect1.getTopRight().y == rect2.getBottomRight().y) return true;
+    
+    if (rect1.getBottomLeft().x == rect2.getTopLeft().x && rect1.getBottomLeft().y == rect2.getTopLeft().y) return true;
+    if (rect1.getBottomLeft().x == rect2.getBottomLeft().x && rect1.getBottomLeft().y == rect2.getBottomLeft().y) return true;
+    if (rect1.getBottomLeft().x == rect2.getBottomRight().x && rect1.getBottomLeft().y == rect2.getBottomRight().y) return true;
+    
+    if (rect1.getBottomRight().x == rect2.getTopRight().x && rect1.getBottomRight().y == rect2.getTopRight().y) return true;
+    if (rect1.getBottomRight().x == rect2.getBottomLeft().x && rect1.getBottomRight().y == rect2.getBottomLeft().y) return true;
+    if (rect1.getBottomRight().x == rect2.getBottomRight().x && rect1.getBottomRight().y == rect2.getBottomRight().y) return true;
+
+    // 2. Перевірка на кути, що лежать на сторонах
+    if (rect2.isPointOnSide(rect1.getTopLeft())) return true;
+    if (rect2.isPointOnSide(rect1.getTopRight())) return true;
+    if (rect2.isPointOnSide(rect1.getBottomLeft())) return true;
+    if (rect2.isPointOnSide(rect1.getBottomRight())) return true;
+    
+    if (rect1.isPointOnSide(rect2.getTopLeft())) return true;
+    if (rect1.isPointOnSide(rect2.getTopRight())) return true;
+    if (rect1.isPointOnSide(rect2.getBottomLeft())) return true;
+    if (rect1.isPointOnSide(rect2.getBottomRight())) return true;
+
+    // 3. Перевірка на спільні сторони
+    if (rect1.hasCommonSide(rect2)) return true;
+
+    // 4. Перевірка на горизонтальне/вертикальне прилягання на відстані 1
+    if (isCloseEnoughToShareSide(rect1, rect2)) return true;
+
+    // 5. Перевірка на діагональне торкання кутів (відстань 1 по діагоналі)
+    Point r1_tl = rect1.getTopLeft();
+    Point r1_tr = rect1.getTopRight();
+    Point r1_bl = rect1.getBottomLeft();
+    Point r1_br = rect1.getBottomRight();
+    
+    Point r2_tl = rect2.getTopLeft();
+    Point r2_tr = rect2.getTopRight();
+    Point r2_bl = rect2.getBottomLeft();
+    Point r2_br = rect2.getBottomRight();
+    
+    // rect1 нижній правий торкається rect2 верхнього лівого
+    if (r1_br.x == r2_tl.x - 1 && r1_br.y == r2_tl.y - 1) return true;
+    // rect1 нижній лівий торкається rect2 верхнього правого
+    if (r1_bl.x == r2_tr.x + 1 && r1_bl.y == r2_tr.y - 1) return true;
+    // rect1 верхній правий торкається rect2 нижнього лівого
+    if (r1_tr.x == r2_bl.x - 1 && r1_tr.y == r2_bl.y + 1) return true;
+    // rect1 верхній лівий торкається rect2 нижнього правого
+    if (r1_tl.x == r2_br.x + 1 && r1_tl.y == r2_br.y + 1) return true;
+    
+    // Те ж саме для зворотних випадків
+    // rect2 нижній правий торкається rect1 верхнього лівого
+    if (r2_br.x == r1_tl.x - 1 && r2_br.y == r1_tl.y - 1) return true;
+    // rect2 нижній лівий торкається rect1 верхнього правого
+    if (r2_bl.x == r1_tr.x + 1 && r2_bl.y == r1_tr.y - 1) return true;
+    // rect2 верхній правий торкається rect1 нижнього лівого
+    if (r2_tr.x == r1_bl.x - 1 && r2_tr.y == r1_bl.y + 1) return true;
+    // rect2 верхній лівий торкається rect1 нижнього правого
+    if (r2_tl.x == r1_br.x + 1 && r2_tl.y == r1_br.y + 1) return true;
+
+    return false;
+}
+
 
 
 

@@ -104,6 +104,50 @@ public:
         cout << "\nFound solution:\n";
         all_solutions[0].print();
     }
+private:
+
+bool should_stop_search() {
+
+
+    if (solution_attempts >= max_attempts) {
+
+        cout << "Max attempts reached. Stopping search\n";
+        return true;
+    }
+    if (backtrack_calls >= max_backtrack_calls) {
+        cout << "Max backtrack calls reached, stopping search\n";
+        return true;
+    }
+
+    return false;
+}
+    bool isSolutionValid(const Solution& solution) {
+        solution_attempts++;
+        
+        // Check rectangles don't touch
+        for (size_t i = 0; i < solution.rectangles.size(); ++i) {
+            for (size_t j = i + 1; j < solution.rectangles.size(); ++j) {
+                if (hasCommonSideOrCorner(solution.rectangles[i].rect, solution.rectangles[j].rect)) {
+                    return false;
+                }
+            }
+        }
+        
+        // Check all numbers are zero
+        for (const auto& row : solution.current_matrix) {
+            for (const auto& cell : row) {
+                if (cell != "-" && cell != "0" && cell != "=") {
+                    if (stoi(cell) != 0) return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+
+
+
+
 
     void backtrack(Solution& current, bool process_primes) {
         // Find the next number to process

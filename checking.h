@@ -1,25 +1,23 @@
 #ifndef CHECKING_H
 #define CHECKING_H
 
+#include <vector>
+#include <iostream>
+
+
 struct Point {
     int x, y;
     bool isTop;    // true для верхніх точок, false для нижніх
     bool isLeft;   // true для лівих точок, false для правих
 };
 
-
 class Rectangle {
+private:
+    Point topLeft, bottomRight;
+    Point topRight, bottomLeft;
 
-private: 
- Point topLeft, bottomRight;
- Point topRight, bottomLeft;
-
-
-  void calculateOtherPoints() {
-
-
-
-topRight.x = bottomRight.x;
+    void calculateOtherPoints() {
+        topRight.x = bottomRight.x;
         topRight.y = topLeft.y;
         topRight.isTop = true;
         topRight.isLeft = false;
@@ -28,14 +26,9 @@ topRight.x = bottomRight.x;
         bottomLeft.y = bottomRight.y;
         bottomLeft.isTop = false;
         bottomLeft.isLeft = true;
+    }
 
-
-
-
-
-  }
-
-  public:
+public:
     Rectangle(Point tl, Point br) : topLeft(tl), bottomRight(br) {
         topLeft.isTop = true;
         topLeft.isLeft = true;
@@ -49,7 +42,7 @@ topRight.x = bottomRight.x;
     Point getBottomLeft() const { return bottomLeft; }
     Point getBottomRight() const { return bottomRight; }
 
-bool isPointOnSide(Point p) const {
+    bool isPointOnSide(Point p) const {
         // Верхня сторона (тільки для точок з isTop = true)
         if (p.y == topLeft.y && p.isTop && 
             p.x >= topLeft.x && p.x <= topRight.x) return true;
@@ -69,7 +62,7 @@ bool isPointOnSide(Point p) const {
         return false;
     }
 
-bool hasCommonSide(const Rectangle& other) const {
+    bool hasCommonSide(const Rectangle& other) const {
         if (topLeft.y == other.getTopLeft().y &&
             ((topLeft.x >= other.getTopLeft().x && topLeft.x <= other.getTopRight().x) ||
              (topRight.x >= other.getTopLeft().x && topRight.x <= other.getTopRight().x) ||
@@ -111,7 +104,7 @@ bool hasCommonSide(const Rectangle& other) const {
 
         return false;
     }
-
+};
 
 bool isCloseEnoughToShareSide(const Rectangle& rect1, const Rectangle& rect2) {
     Point a1 = rect1.getTopLeft();
@@ -202,13 +195,4 @@ bool hasCommonSideOrCorner(const Rectangle& rect1, const Rectangle& rect2) {
     return false;
 }
 
-
-
-
-
-};
-
-
-
-
-#endif  // CHECKING.h
+#endif // CHECKING_H

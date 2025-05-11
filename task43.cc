@@ -1,5 +1,8 @@
 #include <iostream>
 #include <string>
+#include <algorithm>
+#include <cmath>
+#include <utility>
 #include <vector>
 #include "checking.h"
 using namespace std;

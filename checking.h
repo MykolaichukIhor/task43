@@ -69,6 +69,73 @@ bool isPointOnSide(Point p) const {
         return false;
     }
 
+bool hasCommonSide(const Rectangle& other) const {
+        if (topLeft.y == other.getTopLeft().y &&
+            ((topLeft.x >= other.getTopLeft().x && topLeft.x <= other.getTopRight().x) ||
+             (topRight.x >= other.getTopLeft().x && topRight.x <= other.getTopRight().x) ||
+             (other.getTopLeft().x >= topLeft.x && other.getTopLeft().x <= topRight.x))) {
+            return true;
+        }
+
+        if (bottomLeft.y == other.getBottomLeft().y &&
+            ((bottomLeft.x >= other.getBottomLeft().x && bottomLeft.x <= other.getBottomRight().x) ||
+             (bottomRight.x >= other.getBottomLeft().x && bottomRight.x <= other.getBottomRight().x) ||
+             (other.getBottomLeft().x >= bottomLeft.x && other.getBottomLeft().x <= bottomRight.x))) {
+            return true;
+        }
+
+        if (topLeft.x == other.getTopLeft().x &&
+            ((topLeft.y >= other.getBottomLeft().y && topLeft.y <= other.getTopLeft().y) ||
+             (bottomLeft.y >= other.getBottomLeft().y && bottomLeft.y <= other.getTopLeft().y) ||
+
+             (other.getTopLeft().y >= bottomLeft.y && other.getTopLeft().y <= topLeft.y) ||
+            
+             (other.getTopLeft().y <= topLeft.y && topLeft.y <= other.getBottomLeft().y )   ||
+             (bottomLeft.y >= other.getBottomLeft().y &&  other.getBottomLeft().y >= topLeft.y) ||
+             (bottomLeft.y >= other.getTopLeft().y &&  other.getTopLeft().y >= topLeft.y)       )  )
+              {
+            return true;
+        }
+
+        if (topRight.x == other.getTopRight().x &&
+            ((topRight.y >= other.getBottomRight().y && topRight.y <= other.getTopRight().y) ||
+             (bottomRight.y >= other.getBottomRight().y && topRight.y >= other.getBottomRight().y) ||
+             (other.getTopRight().y >= bottomRight.y && other.getTopRight().y <= topRight.y) ||
+            
+             (other.getTopRight().y <= topRight.y &&  topRight.y <= other.getBottomRight().y) ||  
+             (other.getBottomRight().y >= bottomRight.y &&  bottomRight.y >= other.getTopRight().y)  ||
+             (bottomRight.y >= other.getBottomRight().y &&  other.getBottomRight().y >= topRight.y) ||
+             (bottomRight.y >= other.getTopRight().y &&  other.getTopRight().y >= topRight.y) )) {
+            return true;
+        }
+
+        return false;
+    }
+
+
+bool isCloseEnoughToShareSide(const Rectangle& rect1, const Rectangle& rect2) {
+    Point a1 = rect1.getTopLeft();
+    Point a2 = rect1.getBottomRight();
+    Point b1 = rect2.getTopLeft();
+    Point b2 = rect2.getBottomRight();
+
+    // Вертикальне прилягання
+    if ((a2.x + 1 == b1.x || b2.x + 1 == a1.x) &&
+        !(a2.y < b1.y || b2.y < a1.y)) {
+        return true;
+    }
+
+    // Горизонтальне прилягання
+    if ((a1.y == b2.y + 1 || b1.y == a2.y + 1) &&
+        !(a2.x < b1.x || b2.x < a1.x)) {
+        return true;
+    }
+
+    return false;
+}
+
+
+
 
 
 };

@@ -282,34 +282,46 @@ vector<RectangleWrapper> generate_possible_rectangles(const vector<vector<string
     }
 
     private:
-    void backtrack_with_guessing(Solution& current) {
-        // Find the first number to try guessing approach on
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                string cell = current.current_matrix[y][x];
-                if (cell != "-" && cell != "0" && cell != "=") {
-                    int num = stoi(cell);
-                    if (num == 0) continue;
-                    
-                    auto configs = generate_possible_rectangles(current.current_matrix, num, x+1, y+1, false);
-                    
-                    for (const auto& rect : configs) {
-                        Solution new_state = current;
-                        
-                        if (update_matrix_for_rectangle(new_state.current_matrix, rect)) {
-                            new_state.rectangles.push_back(rect);
-                            backtrack(new_state, false);
-                            
-                            if (!all_solutions.empty()) {
-                                return;
-                            }
-                        }
-                    }
-                    return;
+    void backtrack(Solution& current, bool process_primes) {
+    if (should_stop_search() || !all_solutions.empty()) {
+        return;
+    }
+    backtrack_calls++;
+
+    if (isSolutionValid(current)) {
+        all_solutions.push_back(current);
+        return;
+    }
+
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            string cell = current.current_matrix[y][x];
+            if (cell != "-" && cell != "0" && cell != "=") {
+                int num = stoi(cell);
+                if (num == 0) continue;
+                
+                if (!process_primes && isPrime(num)) {
+                    continue;
                 }
+
+                auto configs = generate_possible_rectangles(current.current_matrix, num, x+1, y+1, true);
+                for (const auto& rect : configs) {
+                    Solution new_state = current;
+                    if (update_matrix_for_rectangle(new_state.current_matrix, rect)) {
+                        new_state.rectangles.push_back(rect);
+                        backtrack(new_state, process_primes);
+                        if (!all_solutions.empty()) return;
+                    }
+                }
+                return;
             }
         }
     }
+
+    if (!process_primes) {
+        backtrack(current, true);
+    }
+}
 
 
 

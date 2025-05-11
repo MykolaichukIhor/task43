@@ -28,6 +28,53 @@ class RectangleWrapper {
 };
 
 
+class Solution {
+
+
+
+
+};
+
+
+class PuzzleSolver {
+int max_attempts = 100000; // 10,000 attempts
+    int max_backtrack_calls = 100000; // 10,000 backtracks calls max
+    vector<vector<string>> initial_matrix;
+    int width, height;
+    vector<Solution> all_solutions;
+    int backtrack_calls = 0;
+    int solution_attempts = 0;
+
+    bool isPrime(int n) {
+        if (n <= 1) return false;
+        if (n <= 3) return true;
+        if (n % 2 == 0 || n % 3 == 0) return false;
+        for (int i = 5; i * i <= n; i += 6) {
+            if (n % i == 0 || n % (i + 2) == 0) return false;
+        }
+        return true;
+    }
+
+
+};
+
+
+void backtrack() {
+
+
+
+}
+
+
+
+void backtrack_with_guessing(){
+
+
+
+
+}
+
+
 int main() {
 
     vector<vector<string>> matrix1 =  {

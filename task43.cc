@@ -5,7 +5,6 @@
 using namespace std;
 
 class RectangleWrapper {
-
     public:
      int value;
      Rectangle rect;
@@ -14,22 +13,16 @@ class RectangleWrapper {
         : value(val), 
           rect(Point{x1, y1, true, true}, Point{x2, y2, false, false}) {}
 
-
-          void print() const {
+    void print() const {
         Point tl = rect.getTopLeft();
         Point br = rect.getBottomRight();
         cout << "Rectangle (area " << value << "): [(" 
              << tl.x << "," << tl.y 
              << ")-(" << br.x << "," << br.y << ")]";
     }
-
-
-
 };
 
-
 class Solution {
-
 public:
     vector<RectangleWrapper> rectangles;
     vector<vector<string>> current_matrix;
@@ -41,13 +34,10 @@ public:
         }
         cout << "\n";
     }
-
-
 };
 
-
 class PuzzleSolver {
-int max_attempts = 100000; // 10,000 attempts
+    int max_attempts = 100000; // 10,000 attempts
     int max_backtrack_calls = 100000; // 10,000 backtracks calls max
     vector<vector<string>> initial_matrix;
     int width, height;
@@ -64,10 +54,9 @@ int max_attempts = 100000; // 10,000 attempts
         }
         return true;
     }
+
 public:
-
-
-const vector<Solution>& get_solutions() const { return all_solutions; }
+    const vector<Solution>& get_solutions() const { return all_solutions; }
     
     PuzzleSolver(const vector<vector<string>>& m) : initial_matrix(m) {
         // checking if the matrix is valid (no unknown chars)
@@ -93,7 +82,6 @@ const vector<Solution>& get_solutions() const { return all_solutions; }
         if (height > 0) width = initial_matrix[0].size();
     }
 
-
     void solve() {
         Solution current;
         current.current_matrix = initial_matrix;
@@ -107,29 +95,56 @@ const vector<Solution>& get_solutions() const { return all_solutions; }
         cout << "Total solution attempts: " << solution_attempts << endl;
     }
 
-};
+    void print_solutions() {
+        if (all_solutions.empty()) {
+            cout << "No solutions found\n";
+            return;
+        }
+        
+        cout << "\nFound solution:\n";
+        all_solutions[0].print();
+    }
 
+    void backtrack(Solution& current, bool process_primes) {
+        // Find the next number to process
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                string cell = current.current_matrix[y][x];
+                if (cell != "-" && cell != "0" && cell != "=") {
+                    int num = stoi(cell);
+                    if (num == 0) continue;
+                    
+                    // Skip primes in first pass
+                    if (!process_primes && isPrime(num)) {
+                        continue;
+                    }
+                }
+            }
+        }
 
-void backtrack() {
+        // If no numbers found in first pass, try again with primes
+        if (!process_primes) {
+            backtrack(current, true);
+        }
+    }
 
-
-
-}
-
-
-
-void backtrack_with_guessing(){
-
-
-
-
-}
-
+    void backtrack_with_guessing(Solution& current) {
+        // Find the first number to try guessing approach on
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                string cell = current.current_matrix[y][x];
+                if (cell != "-" && cell != "0" && cell != "=") {
+                    int num = stoi(cell);
+                    if (num == 0) continue;
+                }
+            }
+        }
+    }
+}; // PuzzleSolver end
 
 int main() {
-
     vector<vector<string>> matrix1 =  {
-    { "-", "-", "-", "-", "-", "-", "-", "-"  },
+        { "-", "-", "-", "-", "-", "-", "-", "-"  },
         { "-", "-", "-", "-", "-", "-", "-", "-"  },
         { "-", "-", "43","-", "46" , "-", "-", "-"},
         { "-", "-", "-",  "-" , "-", "-", "-", "-"  },
@@ -137,10 +152,10 @@ int main() {
         { "-", "-" , "-", "-", "-",  "-" , "-", "-"  },
         { "-", "-" , "-", "-", "-",  "-" , "-", "-"  },
         { "-", "-", "-", "-", "-" , "-", "-", "-" }
-     };
+    };
 
-     vector<vector<string>> matrix2 = {
-         { "-", "-", "-", "-", "-", "-", "-", "-"  },
+    vector<vector<string>> matrix2 = {
+        { "-", "-", "-", "-", "-", "-", "-", "-"  },
         { "-", "-", "-", "-", "-", "27", "-", "-"  },
         { "-", "-", "21","-", "-" , "-", "-", "-"},
         { "-", "0", "-",  "0" , "-", "-", "-", "-"  },
@@ -151,8 +166,7 @@ int main() {
         { "-", "-", "-", "-", "-", "-", "-", "-",  }
     };
 
-cout << "Testing 1" << endl;
-
+    cout << "Testing 1" << endl;
 
     return 0;
 }

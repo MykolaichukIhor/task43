@@ -58,6 +58,17 @@ class PuzzleSolver {
     }
 
 public:
+
+    void print_solutions() {
+        if (all_solutions.empty()) {
+            cout << "No solutions found\n";
+            return;
+        }
+        cout << "\nFound solution:\n";
+        all_solutions[0].print();
+    }
+
+
     const vector<Solution>& get_solutions() const { return all_solutions; }
     
     PuzzleSolver(const vector<vector<string>>& m) : initial_matrix(m) {
@@ -97,15 +108,7 @@ public:
         cout << "Total solution attempts: " << solution_attempts << endl;
     }
 
-    void print_solutions() {
-        if (all_solutions.empty()) {
-            cout << "No solutions found\n";
-            return;
-        }
-        
-        cout << "\nFound solution:\n";
-        all_solutions[0].print();
-    }
+    
 private:
 
 

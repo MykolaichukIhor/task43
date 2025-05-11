@@ -335,7 +335,25 @@ bool should_stop_search() {
     }
 };
 
-
+vector<vector<string>> input_matrix_manually() {
+    int width, height;
+    cout << "Enter matrix width: ";
+    cin >> width;
+    cout << "Enter matrix height: ";
+    cin >> height;
+    
+    vector<vector<string>> matrix(height, vector<string>(width));
+    
+    cout << "Enter matrix elements (use '-' for empty, '0' for zero, '=' for wall):\n";
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            cout << "Element [" << i+1 << "][" << j+1 << "]: ";
+            cin >> matrix[i][j];
+        }
+    }
+    
+    return matrix;
+}
 
 void solve_puzzle_programmatically(const vector<vector<string>>& matrix) {
     PuzzleSolver solver(matrix);
@@ -425,7 +443,7 @@ while (true) {
         int choice;
         cin >> choice;
 
-        if (choice == 2) {
+        if (choice == 3) {
             cout << "Exiting program...\n";
             break;
         } else if (choice == 1) {
@@ -457,6 +475,20 @@ while (true) {
                 solve_puzzle_programmatically(selected_matrix);
             } else if (method_choice == 2) {
                 solve_puzzle_manually(selected_matrix);
+            } else {
+                cout << "Invalid choice. Please try again.\n";
+            }
+        } else if (choice == 2) {
+            vector<vector<string>> manual_matrix = input_matrix_manually();
+            
+            show_solving_method();
+            int method_choice;
+            cin >> method_choice;
+
+            if (method_choice == 1) {
+                solve_puzzle_programmatically(manual_matrix);
+            } else if (method_choice == 2) {
+                solve_puzzle_manually(manual_matrix);
             } else {
                 cout << "Invalid choice. Please try again.\n";
             }

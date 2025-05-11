@@ -35,8 +35,39 @@ topRight.x = bottomRight.x;
 
   }
 
+  public:
+    Rectangle(Point tl, Point br) : topLeft(tl), bottomRight(br) {
+        topLeft.isTop = true;
+        topLeft.isLeft = true;
+        bottomRight.isTop = false;
+        bottomRight.isLeft = false;
+        calculateOtherPoints();
+    }
 
+    Point getTopLeft() const { return topLeft; }
+    Point getTopRight() const { return topRight; }
+    Point getBottomLeft() const { return bottomLeft; }
+    Point getBottomRight() const { return bottomRight; }
 
+bool isPointOnSide(Point p) const {
+        // Верхня сторона (тільки для точок з isTop = true)
+        if (p.y == topLeft.y && p.isTop && 
+            p.x >= topLeft.x && p.x <= topRight.x) return true;
+            
+        // Нижня сторона (тільки для точок з isTop = false)
+        if (p.y == bottomLeft.y && !p.isTop && 
+            p.x >= bottomLeft.x && p.x <= bottomRight.x) return true;
+            
+        // Ліва сторона (тільки для точок з isLeft = true)
+        if (p.x == topLeft.x && p.isLeft && 
+            p.y >= bottomLeft.y && p.y <= topLeft.y) return true;
+            
+        // Права сторона (тільки для точок з isLeft = false)
+        if (p.x == topRight.x && !p.isLeft && 
+            p.y >= bottomRight.y && p.y <= topRight.y) return true;
+            
+        return false;
+    }
 
 
 

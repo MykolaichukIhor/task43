@@ -1,8 +1,9 @@
 #include <iostream>
+#include <vector>
+#include <utility>
 #include <string>
 #include <algorithm>
 #include <cmath>
-#include <vector>
 #include "checking.h"
 #include "visualizer.h"
 
@@ -41,14 +42,14 @@ public:
 };
 
 class PuzzleSolver {
-    int max_attempts = 100000;
-    int max_backtrack_calls = 100000;
+    int max_attempts = 100000; // 10,000 attempts
+    int max_backtrack_calls = 100000; // 10,000 backtracks calls max
     vector<vector<string>> initial_matrix;
     int width, height;
     vector<Solution> all_solutions;
     int backtrack_calls = 0;
     int solution_attempts = 0;
-
+    
     bool isPrime(int n) {
         if (n <= 1) return false;
         if (n <= 3) return true;
@@ -58,30 +59,25 @@ class PuzzleSolver {
         }
         return true;
     }
-
+    
 public:
-    void print_solutions() {
-        if (all_solutions.empty()) {
-            cout << "No solutions found\n";
-            return;
-        }
-        cout << "\nFound solution:\n";
-        all_solutions[0].print();
-    }
-
     const vector<Solution>& get_solutions() const { return all_solutions; }
     
     PuzzleSolver(const vector<vector<string>>& m) : initial_matrix(m) {
+        // checking if the matrix is valid (no unknown chars)
         for (const auto& row : m) {
             for (const auto& cell : row) {
                 if (cell != "-" && cell != "0" && cell != "=") {
                     try {
                         int num = stoi(cell);
                         if (num <= 0) {
-                            cerr << "Found negative number in the matrix. Aborting... " << cell << endl;
+                            cerr << "Found negative number in the matrix. Abortion... " << cell << endl;
                         }
-                    } catch (...) {
-                        cerr << "Invalid cell value: " << cell << endl;
+                    } catch (const invalid_argument&) {
+                        cerr << "Found unknown char in the matrix. Abortion..." << cell 
+                             << " It can be 0, - or any positive number)" << endl;
+                    } catch (const out_of_range&) {
+                        cerr << "The number in the matrix is too big! " << cell << endl;
                     }
                 }
             }
@@ -90,7 +86,8 @@ public:
         height = initial_matrix.size();
         if (height > 0) width = initial_matrix[0].size();
     }
-
+    
+    
     void solve() {
         Solution current;
         current.current_matrix = initial_matrix;
@@ -103,12 +100,62 @@ public:
         cout << "Total backtrack calls: " << backtrack_calls << endl;
         cout << "Total solution attempts: " << solution_attempts << endl;
     }
+    
+    void print_solutions() {
+        if (all_solutions.empty()) {
+            cout << "No solutions found\n";
+            return;
+        }
+        
+        cout << "\nFound solution:\n";
+        all_solutions[0].print();
+    }
 
 private:
+bool should_stop_search() {
+
+
+    if (solution_attempts >= max_attempts) {
+
+        cout << "Max attempts reached. Stopping search\n";
+        return true;
+    }
+    if (backtrack_calls >= max_backtrack_calls) {
+        cout << "Max backtrack calls reached, stopping search\n";
+        return true;
+    }
+
+    return false;
+}
+    bool isSolutionValid(const Solution& solution) {
+        solution_attempts++;
+        
+        // Check rectangles don't touch
+        for (size_t i = 0; i < solution.rectangles.size(); ++i) {
+            for (size_t j = i + 1; j < solution.rectangles.size(); ++j) {
+                if (hasCommonSideOrCorner(solution.rectangles[i].rect, solution.rectangles[j].rect)) {
+                    return false;
+                }
+            }
+        }
+        
+        // Check all numbers are zero
+        for (const auto& row : solution.current_matrix) {
+            for (const auto& cell : row) {
+                if (cell != "-" && cell != "0" && cell != "=") {
+                    if (stoi(cell) != 0) return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+    
     bool can_place_rectangle(const vector<vector<string>>& matrix, const RectangleWrapper& rect) {
         Point tl = rect.rect.getTopLeft();
         Point br = rect.rect.getBottomRight();
         
+        // Check if rectangle contains any "0" or "="
         for (int y = tl.y; y <= br.y; ++y) {
             for (int x = tl.x; x <= br.x; ++x) {
                 string cell = matrix[y-1][x-1];
@@ -119,11 +166,12 @@ private:
         }
         return true;
     }
-
+    
     bool update_matrix_for_rectangle(vector<vector<string>>& matrix, const RectangleWrapper& rect) {
         Point tl = rect.rect.getTopLeft();
         Point br = rect.rect.getBottomRight();
         
+        // First check if update would cause any negative numbers
         for (int y = tl.y; y <= br.y; ++y) {
             for (int x = tl.x; x <= br.x; ++x) {
                 string& cell = matrix[y-1][x-1];
@@ -136,6 +184,7 @@ private:
             }
         }
         
+        // Apply the update
         for (int y = tl.y; y <= br.y; ++y) {
             for (int x = tl.x; x <= br.x; ++x) {
                 string& cell = matrix[y-1][x-1];
@@ -147,49 +196,17 @@ private:
         }
         return true;
     }
-
-    bool should_stop_search() {
-        if (solution_attempts >= max_attempts) {
-            cout << "Max attempts reached. Stopping search\n";
-            return true;
-        }
-        if (backtrack_calls >= max_backtrack_calls) {
-            cout << "Max backtrack calls reached, stopping search\n";
-            return true;
-        }
-        return false;
-    }
-
-    bool isSolutionValid(const Solution& solution) {
-        solution_attempts++;
-        
-        for (size_t i = 0; i < solution.rectangles.size(); ++i) {
-            for (size_t j = i + 1; j < solution.rectangles.size(); ++j) {
-                if (hasCommonSideOrCorner(solution.rectangles[i].rect, solution.rectangles[j].rect)) {
-                    return false;
-                }
-            }
-        }
-        
-        for (const auto& row : solution.current_matrix) {
-            for (const auto& cell : row) {
-                if (cell != "-" && cell != "0" && cell != "=") {
-                    if (stoi(cell) != 0) return false;
-                }
-            }
-        }
-        
-        return true;
-    }
-
+    
     vector<RectangleWrapper> generate_possible_rectangles(const vector<vector<string>>& matrix, int num, int x, int y, bool product_only) {
         vector<RectangleWrapper> configs;
         
         if (product_only) {
+            // Only consider rectangles where area is exactly the number (product decomposition)
             for (int w = 1; w <= num; ++w) {
                 if (num % w == 0) {
                     int h = num / w;
                     if (w <= width && h <= height) {
+                        // Generate all possible rectangles with these dimensions containing (x,y)
                         for (int startY = max(1, y - h + 1); startY <= min(height - h + 1, y); ++startY) {
                             for (int startX = max(1, x - w + 1); startX <= min(width - w + 1, x); ++startX) {
                                 int endX = startX + w - 1;
@@ -205,13 +222,16 @@ private:
                 }
             }
         } else {
-            for (int value = 1; value <= num; ++value) {
-                if (isPrime(value) && value != num) continue;
+            // Consider all possible rectangle values that could be subtracted (guessing approach)
+            for (int value = 1; value <= num; ++value) {  // Changed from value < num to value <= num
+                if (isPrime(value) && value != num) continue; // Skip primes (except when value == num)
                 
+                // Find all possible rectangle dimensions for this value
                 for (int w = 1; w <= value; ++w) {
                     if (value % w == 0) {
                         int h = value / w;
                         if (w <= width && h <= height) {
+                            // Generate all possible rectangles with these dimensions containing (x,y)
                             for (int startY = max(1, y - h + 1); startY <= min(height - h + 1, y); ++startY) {
                                 for (int startX = max(1, x - w + 1); startX <= min(width - w + 1, x); ++startX) {
                                     int endX = startX + w - 1;
@@ -228,20 +248,24 @@ private:
                 }
             }
         }
+        
         return configs;
     }
-
+    
     void backtrack(Solution& current, bool process_primes) {
-        if (should_stop_search() || !all_solutions.empty()) {
-            return;
-        }
-        backtrack_calls++;
-
+        // if (should_stop_search() || !all_solutions.empty()) {
+        //     return;
+        // }
+        // backtrack_calls++;
+        
+        
+        // Check if current solution is complete and valid
         if (isSolutionValid(current)) {
             all_solutions.push_back(current);
             return;
         }
-
+        
+        // Find the next number to process
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 string cell = current.current_matrix[y][x];
@@ -249,30 +273,40 @@ private:
                     int num = stoi(cell);
                     if (num == 0) continue;
                     
+                    // Skip primes in first pass
                     if (!process_primes && isPrime(num)) {
                         continue;
                     }
-
+                    
                     auto configs = generate_possible_rectangles(current.current_matrix, num, x+1, y+1, true);
+                    
                     for (const auto& rect : configs) {
                         Solution new_state = current;
+                        
                         if (update_matrix_for_rectangle(new_state.current_matrix, rect)) {
                             new_state.rectangles.push_back(rect);
                             backtrack(new_state, process_primes);
-                            if (!all_solutions.empty()) return;
+                            
+                            if (!all_solutions.empty()) {
+                                return;
+                            }
                         }
                     }
                     return;
                 }
             }
         }
-
+        
+        // If no numbers found in first pass, try again with primes
         if (!process_primes) {
             backtrack(current, true);
         }
-    }
 
+    } 
+    
+    
     void backtrack_with_guessing(Solution& current) {
+        // Find the first number to try guessing approach on
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 string cell = current.current_matrix[y][x];
@@ -302,7 +336,18 @@ private:
 };
 
 int main() {
-    vector<vector<string>> matrix =  {
+
+    vector<vector<string>> matrix = {
+        {"-", "-", "-", "-", "6", "-", "-"},
+        {"-", "-", "-", "24", "-", "-", "-"},
+        {"-", "-", "41", "-", "-", "-", "-"},
+        {"-", "-", "-", "-", "-", "32", "-"},
+        {"-", "-", "-", "-", "30", "-", "-"},
+        {"-", "-", "-", "0", "-", "-", "-"}
+     };
+
+
+    vector<vector<string>> matrix2 = {
         { "-", "-", "-", "-", "-", "-", "-", "-"  },
         { "-", "-", "-", "-", "-", "-", "-", "-"  },
         { "-", "-", "43","-", "46" , "-", "-", "-"},
@@ -313,8 +358,8 @@ int main() {
         { "-", "-", "-", "-", "-" , "-", "-", "-" }
     };
 
-    vector<vector<string>> matrix2 = {
-        { "-", "-", "-", "-", "-", "-", "-", "-"  },
+    vector<vector<string>> matrix3 = {
+         { "-", "-", "-", "-", "-", "-", "-", "-"  },
         { "-", "-", "-", "-", "-", "27", "-", "-"  },
         { "-", "-", "21","-", "-" , "-", "-", "-"},
         { "-", "0", "-",  "0" , "-", "-", "-", "-"  },
@@ -324,6 +369,7 @@ int main() {
         { "-", "-", "16", "-", "-" , "-", "17", "-" },
         { "-", "-", "-", "-", "-", "-", "-", "-",  }
     };
+
 
     PuzzleSolver solver(matrix);
     solver.solve();
@@ -335,6 +381,7 @@ int main() {
         for (const auto& wrapper : solution.rectangles) {
             rectangles.push_back(wrapper.rect);
         }
+
         Visualizer viz(matrix);
         viz.visualize(rectangles);
     }

@@ -9,8 +9,8 @@
 using namespace std;
 
 class PuzzleSolver {
-    int max_attempts = 100000;
-    int max_backtrack_calls = 100000;
+    int max_attempts = 10000;         // max 10,000 attempts
+    int max_backtrack_calls = 10000;  // max 10,000 attempts
     vector<vector<string>> initial_matrix;
     int width, height;
     vector<Solution> all_solutions;

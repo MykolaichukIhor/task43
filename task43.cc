@@ -371,19 +371,38 @@ int main() {
     };
 
 
+     cout << "Initial matrix:\n";
+    for (const auto& row : matrix) {
+        for (const auto& cell : row) {
+            cout << cell << "\t";
+        }
+        cout << "\n";
+    }
+    cout << "\n";
+
     PuzzleSolver solver(matrix);
     solver.solve();
     solver.print_solutions();
 
     if (!solver.get_solutions().empty()) {
         const Solution& solution = solver.get_solutions()[0];
-        vector<Rectangle> rectangles;
-        for (const auto& wrapper : solution.rectangles) {
-            rectangles.push_back(wrapper.rect);
+        cout << "\nFound rectangle configurations:\n";
+        for (size_t i = 0; i < solution.rectangles.size(); ++i) {
+            cout << i+1 << ". ";
+            solution.rectangles[i].print();
+            cout << "\n";
         }
 
-        Visualizer viz(matrix);
-        viz.visualize(rectangles);
+      
+        cout << "\nFinal matrix after subtractions:\n";
+        for (const auto& row : solution.current_matrix) {
+            for (const auto& cell : row) {
+                cout << cell << "\t";
+            }
+            cout << "\n";
+        }
+    } else {
+        cout << "No solutions found after " << solver.get_solutions().size() << " attempts.\n";
     }
 
     return 0;

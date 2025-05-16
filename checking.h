@@ -4,18 +4,32 @@
 #include <vector>
 #include <iostream>
 
-
+/* ---------------------------------------------------------------------[<]-
+Struct: Point
+Synopsis: Represents a point with coordinates and flags indicating its position
+           (top/bottom, left/right) in a rectangle.
+---------------------------------------------------------------------[>]-*/
 struct Point {
     int x, y;
-    bool isTop;    // true для верхніх точок, false для нижніх
-    bool isLeft;   // true для лівих точок, false для правих
+    bool isTop;    // true for top points, false for bottom
+    bool isLeft;   // true for left points, false for right
 };
 
+/* ---------------------------------------------------------------------[<]-
+Class: Rectangle
+Synopsis: Represents a rectangle defined by its corner points, with methods
+           for geometric relationships and side detection.
+---------------------------------------------------------------------[>]-*/
 class Rectangle {
 private:
     Point topLeft, bottomRight;
     Point topRight, bottomLeft;
 
+    /* ---------------------------------------------------------------------[<]-
+    Function: calculateOtherPoints
+    Synopsis: Calculates top-right and bottom-left points based on top-left
+               and bottom-right points.
+    ---------------------------------------------------------------------[>]-*/
     void calculateOtherPoints() {
         topRight.x = bottomRight.x;
         topRight.y = topLeft.y;
@@ -29,6 +43,11 @@ private:
     }
 
 public:
+    /* ---------------------------------------------------------------------[<]-
+    Function: Rectangle (constructor)
+    Synopsis: Initializes rectangle with top-left and bottom-right points,
+               calculating other corners.
+    ---------------------------------------------------------------------[>]-*/
     Rectangle(Point tl, Point br) : topLeft(tl), bottomRight(br) {
         topLeft.isTop = true;
         topLeft.isLeft = true;
@@ -37,31 +56,40 @@ public:
         calculateOtherPoints();
     }
 
+    // Accessor methods
     Point getTopLeft() const { return topLeft; }
     Point getTopRight() const { return topRight; }
     Point getBottomLeft() const { return bottomLeft; }
     Point getBottomRight() const { return bottomRight; }
 
+    /* ---------------------------------------------------------------------[<]-
+    Function: isPointOnSide
+    Synopsis: Checks if a point lies exactly on any side of the rectangle.
+    ---------------------------------------------------------------------[>]-*/
     bool isPointOnSide(Point p) const {
-        // Верхня сторона (тільки для точок з isTop = true)
+        // Top side (only for points with isTop = true)
         if (p.y == topLeft.y && p.isTop && 
             p.x >= topLeft.x && p.x <= topRight.x) return true;
             
-        // Нижня сторона (тільки для точок з isTop = false)
+        // Bottom side (only for points with isTop = false)
         if (p.y == bottomLeft.y && !p.isTop && 
             p.x >= bottomLeft.x && p.x <= bottomRight.x) return true;
             
-        // Ліва сторона (тільки для точок з isLeft = true)
+        // Left side (only for points with isLeft = true)
         if (p.x == topLeft.x && p.isLeft && 
             p.y >= bottomLeft.y && p.y <= topLeft.y) return true;
             
-        // Права сторона (тільки для точок з isLeft = false)
+        // Right side (only for points with isLeft = false)
         if (p.x == topRight.x && !p.isLeft && 
             p.y >= bottomRight.y && p.y <= topRight.y) return true;
             
         return false;
     }
 
+    /* ---------------------------------------------------------------------[<]-
+    Function: hasCommonSide
+    Synopsis: Determines if two rectangles share a common side (adjacent edges).
+    ---------------------------------------------------------------------[>]-*/
     bool hasCommonSide(const Rectangle& other) const {
         if (topLeft.y == other.getTopLeft().y &&
             ((topLeft.x >= other.getTopLeft().x && topLeft.x <= other.getTopRight().x) ||
@@ -106,19 +134,23 @@ public:
     }
 };
 
+/* ---------------------------------------------------------------------[<]-
+Function: isCloseEnoughToShareSide
+Synopsis: Checks if two rectangles are adjacent (within 1 unit distance).
+---------------------------------------------------------------------[>]-*/
 bool isCloseEnoughToShareSide(const Rectangle& rect1, const Rectangle& rect2) {
     Point a1 = rect1.getTopLeft();
     Point a2 = rect1.getBottomRight();
     Point b1 = rect2.getTopLeft();
     Point b2 = rect2.getBottomRight();
 
-    // Вертикальне прилягання
+    // Vertical adjacency
     if ((a2.x + 1 == b1.x || b2.x + 1 == a1.x) &&
         !(a2.y < b1.y || b2.y < a1.y)) {
         return true;
     }
 
-    // Горизонтальне прилягання
+    // Horizontal adjacency
     if ((a1.y == b2.y + 1 || b1.y == a2.y + 1) &&
         !(a2.x < b1.x || b2.x < a1.x)) {
         return true;
@@ -127,8 +159,13 @@ bool isCloseEnoughToShareSide(const Rectangle& rect1, const Rectangle& rect2) {
     return false;
 }
 
+/* ---------------------------------------------------------------------[<]-
+Function: hasCommonSideOrCorner
+Synopsis: Comprehensive check for any geometric relationship between rectangles
+           (shared sides, corners, adjacency, or diagonal contact).
+---------------------------------------------------------------------[>]-*/
 bool hasCommonSideOrCorner(const Rectangle& rect1, const Rectangle& rect2) {
-    // 1. Перевірка на спільні кути
+    // 1. Check for shared corners
     if (rect1.getTopLeft().x == rect2.getTopLeft().x && rect1.getTopLeft().y == rect2.getTopLeft().y) return true;
     if (rect1.getTopLeft().x == rect2.getTopRight().x && rect1.getTopLeft().y == rect2.getTopRight().y) return true;
     if (rect1.getTopLeft().x == rect2.getBottomLeft().x && rect1.getTopLeft().y == rect2.getBottomLeft().y) return true;
@@ -145,7 +182,7 @@ bool hasCommonSideOrCorner(const Rectangle& rect1, const Rectangle& rect2) {
     if (rect1.getBottomRight().x == rect2.getBottomLeft().x && rect1.getBottomRight().y == rect2.getBottomLeft().y) return true;
     if (rect1.getBottomRight().x == rect2.getBottomRight().x && rect1.getBottomRight().y == rect2.getBottomRight().y) return true;
 
-    // 2. Перевірка на кути, що лежать на сторонах
+    // 2. Check for corners on sides
     if (rect2.isPointOnSide(rect1.getTopLeft())) return true;
     if (rect2.isPointOnSide(rect1.getTopRight())) return true;
     if (rect2.isPointOnSide(rect1.getBottomLeft())) return true;
@@ -156,13 +193,13 @@ bool hasCommonSideOrCorner(const Rectangle& rect1, const Rectangle& rect2) {
     if (rect1.isPointOnSide(rect2.getBottomLeft())) return true;
     if (rect1.isPointOnSide(rect2.getBottomRight())) return true;
 
-    // 3. Перевірка на спільні сторони
+    // 3. Check for shared sides
     if (rect1.hasCommonSide(rect2)) return true;
 
-    // 4. Перевірка на горизонтальне/вертикальне прилягання на відстані 1
+    // 4. Check for horizontal/vertical adjacency (1 unit distance)
     if (isCloseEnoughToShareSide(rect1, rect2)) return true;
 
-    // 5. Перевірка на діагональне торкання кутів (відстань 1 по діагоналі)
+    // 5. Check for diagonal corner contact (1 unit diagonal distance)
     Point r1_tl = rect1.getTopLeft();
     Point r1_tr = rect1.getTopRight();
     Point r1_bl = rect1.getBottomLeft();
@@ -173,23 +210,23 @@ bool hasCommonSideOrCorner(const Rectangle& rect1, const Rectangle& rect2) {
     Point r2_bl = rect2.getBottomLeft();
     Point r2_br = rect2.getBottomRight();
     
-    // rect1 нижній правий торкається rect2 верхнього лівого
+    // rect1 bottom right touches rect2 top left
     if (r1_br.x == r2_tl.x - 1 && r1_br.y == r2_tl.y - 1) return true;
-    // rect1 нижній лівий торкається rect2 верхнього правого
+    // rect1 bottom left touches rect2 top right
     if (r1_bl.x == r2_tr.x + 1 && r1_bl.y == r2_tr.y - 1) return true;
-    // rect1 верхній правий торкається rect2 нижнього лівого
+    // rect1 top right touches rect2 bottom left
     if (r1_tr.x == r2_bl.x - 1 && r1_tr.y == r2_bl.y + 1) return true;
-    // rect1 верхній лівий торкається rect2 нижнього правого
+    // rect1 top left touches rect2 bottom right
     if (r1_tl.x == r2_br.x + 1 && r1_tl.y == r2_br.y + 1) return true;
     
-    // Те ж саме для зворотних випадків
-    // rect2 нижній правий торкається rect1 верхнього лівого
+    // Same checks for reverse cases
+    // rect2 bottom right touches rect1 top left
     if (r2_br.x == r1_tl.x - 1 && r2_br.y == r1_tl.y - 1) return true;
-    // rect2 нижній лівий торкається rect1 верхнього правого
+    // rect2 bottom left touches rect1 top right
     if (r2_bl.x == r1_tr.x + 1 && r2_bl.y == r1_tr.y - 1) return true;
-    // rect2 верхній правий торкається rect1 нижнього лівого
+    // rect2 top right touches rect1 bottom left
     if (r2_tr.x == r1_bl.x - 1 && r2_tr.y == r1_bl.y + 1) return true;
-    // rect2 верхній лівий торкається rect1 нижнього правого
+    // rect2 top left touches rect1 bottom right
     if (r2_tl.x == r1_br.x + 1 && r2_tl.y == r1_br.y + 1) return true;
 
     return false;

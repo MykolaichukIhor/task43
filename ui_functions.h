@@ -7,6 +7,11 @@
 
 using namespace std;
 
+/* ---------------------------------------------------------------------[<]-
+ Function: get_valid_int_input
+ Synopsis: Prompts user for integer input and validates it against 
+           specified range. Continues prompting until valid input is received.
+ ---------------------------------------------------------------------[>]-*/
 int get_valid_int_input(const string& prompt, int min_val = INT_MIN, int max_val = INT_MAX) {
     int value;
     while (true) {
@@ -27,6 +32,11 @@ int get_valid_int_input(const string& prompt, int min_val = INT_MIN, int max_val
     }
 }
 
+/* ---------------------------------------------------------------------[<]-
+ Function: input_matrix_manually
+ Synopsis: Allows user to manually input matrix dimensions and elements.
+           Validates inputs and converts -1 to empty cells ("-").
+ ---------------------------------------------------------------------[>]-*/
 vector<vector<string>> input_matrix_manually() {
     int width = get_valid_int_input("Enter matrix width (1-20): ", 1, 20);
     int height = get_valid_int_input("Enter matrix height (1-20): ", 1, 20);
@@ -59,6 +69,11 @@ vector<vector<string>> input_matrix_manually() {
     return matrix;
 }
 
+/* ---------------------------------------------------------------------[<]-
+ Function: solve_puzzle_programmatically
+ Synopsis: Solves puzzle automatically using PuzzleSolver class and 
+           visualizes the first solution found.
+ ---------------------------------------------------------------------[>]-*/
 void solve_puzzle_programmatically(const vector<vector<string>>& matrix) {
     PuzzleSolver solver(matrix);
     solver.solve();
@@ -76,10 +91,18 @@ void solve_puzzle_programmatically(const vector<vector<string>>& matrix) {
     }
 }
 
+/* ---------------------------------------------------------------------[<]-
+ Function: solve_puzzle_manually
+ Synopsis: Placeholder for manual puzzle solving functionality (not implemented).
+ ---------------------------------------------------------------------[>]-*/
 void solve_puzzle_manually(const vector<vector<string>>& matrix) {
     cout << "Manual solving is not implemented yet. Please choose programmatic solving.\n";
 }
 
+/* ---------------------------------------------------------------------[<]-
+ Function: show_menu
+ Synopsis: Displays main menu options and returns user's validated choice.
+ ---------------------------------------------------------------------[>]-*/
 int show_menu() {
     cout << "\n=== Puzzle Solver Menu ===\n";
     cout << "1. Select puzzle to solve\n";
@@ -88,6 +111,10 @@ int show_menu() {
     return get_valid_int_input("Choose an option (1-3): ", 1, 3);
 }
 
+/* ---------------------------------------------------------------------[<]-
+ Function: show_puzzle_selection
+ Synopsis: Displays available pre-defined puzzles and returns user's selection.
+ ---------------------------------------------------------------------[>]-*/
 int show_puzzle_selection() {
     cout << "\n=== Available Puzzles ===\n";
     cout << "1. Puzzle 1 (6x7) - Contains numbers 6, 24, 41, 32, 30, 0\n";
@@ -96,6 +123,10 @@ int show_puzzle_selection() {
     return get_valid_int_input("Choose a puzzle (1-3): ", 1, 3);
 }
 
+/* ---------------------------------------------------------------------[<]-
+ Function: show_solving_method
+ Synopsis: Displays available solving methods and returns user's choice.
+ ---------------------------------------------------------------------[>]-*/
 int show_solving_method() {
     cout << "\n=== Solving Methods ===\n";
     cout << "1. Solve programmatically (automatic solution)\n";

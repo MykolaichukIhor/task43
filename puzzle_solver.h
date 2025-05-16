@@ -8,6 +8,12 @@
 
 using namespace std;
 
+/* ---------------------------------------------------------------------[<]-
+Class: PuzzleSolver
+Synopsis: Solves rectangle-based puzzles by finding valid configurations of 
+           rectangles that cover specified numbers in a matrix. Uses backtracking
+           with various optimization strategies.
+---------------------------------------------------------------------[>]-*/
 class PuzzleSolver {
     int max_attempts = 10000;         // max 10,000 attempts
     int max_backtrack_calls = 10000;  // max 10,000 attempts
@@ -17,6 +23,10 @@ class PuzzleSolver {
     int backtrack_calls = 0;
     int solution_attempts = 0;
     
+    /* ---------------------------------------------------------------------[<]-
+    Function: isPrime
+    Synopsis: Checks if a number is prime using optimized trial division method.
+    ---------------------------------------------------------------------[>]-*/
     bool isPrime(int n) {
         if (n <= 1) return false;
         if (n <= 3) return true;
@@ -30,6 +40,10 @@ class PuzzleSolver {
 public:
     const vector<Solution>& get_solutions() const { return all_solutions; }
     
+    /* ---------------------------------------------------------------------[<]-
+    Function: PuzzleSolver (constructor)
+    Synopsis: Initializes solver with puzzle matrix and validates cell contents.
+    ---------------------------------------------------------------------[>]-*/
     PuzzleSolver(const vector<vector<string>>& m) : initial_matrix(m) {
         for (const auto& row : m) {
             for (const auto& cell : row) {

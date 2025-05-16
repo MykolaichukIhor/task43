@@ -1,6 +1,10 @@
 #pragma once
 #include "puzzle_solver.h"
 
+/* ---------------------------------------------------------------------[<]-
+Function: should_stop_search
+Synopsis: Checks if search should stop based on maximum attempts or backtrack calls.
+---------------------------------------------------------------------[>]-*/
 bool PuzzleSolver::should_stop_search() {
     if (solution_attempts >= max_attempts) {
         cout << "Max attempts reached. Stopping search\n";
@@ -13,6 +17,11 @@ bool PuzzleSolver::should_stop_search() {
     return false;
 }
 
+/* ---------------------------------------------------------------------[<]-
+Function: isSolutionValid
+Synopsis: Validates if current solution is correct by checking rectangle 
+           placements and matrix state.
+---------------------------------------------------------------------[>]-*/
 bool PuzzleSolver::isSolutionValid(const Solution& solution) {
     solution_attempts++;
     
@@ -35,6 +44,11 @@ bool PuzzleSolver::isSolutionValid(const Solution& solution) {
     return true;
 }
 
+/* ---------------------------------------------------------------------[<]-
+Function: can_place_rectangle
+Synopsis: Checks if rectangle can be placed at specified position without 
+           overlapping invalid cells.
+---------------------------------------------------------------------[>]-*/
 bool PuzzleSolver::can_place_rectangle(const vector<vector<string>>& matrix, const RectangleWrapper& rect) {
     Point tl = rect.rect.getTopLeft();
     Point br = rect.rect.getBottomRight();
@@ -50,6 +64,10 @@ bool PuzzleSolver::can_place_rectangle(const vector<vector<string>>& matrix, con
     return true;
 }
 
+/* ---------------------------------------------------------------------[<]-
+Function: update_matrix_for_rectangle
+Synopsis: Updates matrix state by subtracting rectangle value from covered cells.
+---------------------------------------------------------------------[>]-*/
 bool PuzzleSolver::update_matrix_for_rectangle(vector<vector<string>>& matrix, const RectangleWrapper& rect) {
     Point tl = rect.rect.getTopLeft();
     Point br = rect.rect.getBottomRight();
@@ -78,6 +96,10 @@ bool PuzzleSolver::update_matrix_for_rectangle(vector<vector<string>>& matrix, c
     return true;
 }
 
+/* ---------------------------------------------------------------------[<]-
+Function: generate_possible_rectangles
+Synopsis: Generates all valid rectangle configurations for given number and position.
+---------------------------------------------------------------------[>]-*/
 vector<RectangleWrapper> PuzzleSolver::generate_possible_rectangles(const vector<vector<string>>& matrix, int num, int x, int y, bool product_only) {
     vector<RectangleWrapper> configs;
     
@@ -128,6 +150,10 @@ vector<RectangleWrapper> PuzzleSolver::generate_possible_rectangles(const vector
     return configs;
 }
 
+/* ---------------------------------------------------------------------[<]-
+Function: backtrack
+Synopsis: Recursive backtracking algorithm to find valid rectangle placements.
+---------------------------------------------------------------------[>]-*/
 void PuzzleSolver::backtrack(Solution& current, bool process_primes) {
     if (should_stop_search() || !all_solutions.empty()) {
         return;
@@ -172,8 +198,12 @@ void PuzzleSolver::backtrack(Solution& current, bool process_primes) {
     if (!process_primes) {
         backtrack(current, true);
     }
-} 
+}
 
+/* ---------------------------------------------------------------------[<]-
+Function: backtrack_with_guessing
+Synopsis: Alternative backtracking approach that tries more rectangle configurations.
+---------------------------------------------------------------------[>]-*/
 void PuzzleSolver::backtrack_with_guessing(Solution& current) {
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
@@ -202,6 +232,10 @@ void PuzzleSolver::backtrack_with_guessing(Solution& current) {
     }
 }
 
+/* ---------------------------------------------------------------------[<]-
+Function: solve
+Synopsis: Main solving method that initiates the backtracking process.
+---------------------------------------------------------------------[>]-*/
 void PuzzleSolver::solve() {
     Solution current;
     current.current_matrix = initial_matrix;
@@ -215,6 +249,10 @@ void PuzzleSolver::solve() {
     cout << "Total solution attempts: " << solution_attempts << endl;
 }
 
+/* ---------------------------------------------------------------------[<]-
+Function: print_solutions
+Synopsis: Prints found solutions or message if no solutions were found.
+---------------------------------------------------------------------[>]-*/
 void PuzzleSolver::print_solutions() {
     if (all_solutions.empty()) {
         cout << "No solutions found\n";

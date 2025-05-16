@@ -21,6 +21,11 @@ private:
     };
     const string COLOR_RESET = "\033[0m";
 
+    /* ---------------------------------------------------------------------[<]-
+     Function: prepareGrid
+     Synopsis: Initializes the visualization grid based on input matrix dimensions,
+               including padding space around the main grid area.
+    ---------------------------------------------------------------------[>]-*/
     void prepareGrid(const vector<vector<string>>& matrix) {
         height = matrix.size();
         width = height > 0 ? matrix[0].size() : 0;
@@ -49,6 +54,11 @@ private:
         }
     }
 
+    /* ---------------------------------------------------------------------[<]-
+     Function: drawRectangle
+     Synopsis: Draws a colored rectangle on the grid at specified coordinates,
+               including borders and corners.
+    ---------------------------------------------------------------------[>]-*/
     void drawRectangle(const Rectangle& rect, const string& color) {
         Point tl = rect.getTopLeft();
         Point br = rect.getBottomRight();
@@ -91,6 +101,11 @@ private:
         }
     }
 
+    /* ---------------------------------------------------------------------[<]-
+     Function: addBorderAndCoordinates
+     Synopsis: Adds decorative border around the entire visualization grid and
+               includes coordinate labels for rows and columns.
+    ---------------------------------------------------------------------[>]-*/
     void addBorderAndCoordinates() {
         // Add border around entire grid (including padding)
         for (int x = 0; x < grid[0].size(); x++) {
@@ -128,10 +143,20 @@ private:
     }
 
 public:
+    /* ---------------------------------------------------------------------[<]-
+     Function: Visualizer (constructor)
+     Synopsis: Initializes the visualizer with the puzzle matrix and prepares
+               the visualization grid.
+    ---------------------------------------------------------------------[>]-*/
     Visualizer(const vector<vector<string>>& matrix) {
         prepareGrid(matrix);
     }
 
+    /* ---------------------------------------------------------------------[<]-
+     Function: visualize
+     Synopsis: Main visualization method that draws all rectangles, adds borders
+               and coordinates, then outputs the final visualization.
+    ---------------------------------------------------------------------[>]-*/
     void visualize(const vector<Rectangle>& rectangles) {
         cout << "\nVisualization (with extended area):\n";
         

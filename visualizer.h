@@ -17,7 +17,7 @@ private:
     const int cell_height = 3;
     const int padding = 1;  // Additional space around the main grid
     
-    // ANSI color codes for rectangles (now using ASCIIColor namespace)
+    // ANSI color codes for rectangles  using ASCIIColor namespace
     const vector<string> colors = {
         ASCIIColor::Red,
         ASCIIColor::Green,
@@ -130,7 +130,7 @@ private:
 
         // Add coordinates for main grid
         for (int x = 0; x < width; x++) {
-            string coord = to_string(x+1);  
+            string coord = to_string(x+1);  // Залишаємо to_string для чисел
             int pos = (x + padding) * cell_width + (cell_width - coord.length()) / 2;
             if (pos >= 0 && pos + coord.length() < grid[0].size()) {
                 for (size_t i = 0; i < coord.length(); i++) {

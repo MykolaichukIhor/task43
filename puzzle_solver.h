@@ -8,6 +8,8 @@
 
 using namespace std;
 
+
+
 /* ---------------------------------------------------------------------[<]-
 Class: PuzzleSolver
 Synopsis: Solves rectangle-based puzzles by finding valid configurations of 

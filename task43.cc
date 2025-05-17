@@ -4,7 +4,7 @@
  Group: ТВ-41
  Student: Mykolaichuk I.O.
  Written: 2025-05-16
- Revised: 2025-05-16
+ Revised: 
  Description: On the playing field,
               draw rectangles along the given lines so that no two rectangles have a common angle or side,
               and each number represents the total area of ​​all rectangles containing that number.

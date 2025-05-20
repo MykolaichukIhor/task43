@@ -1,7 +1,4 @@
 .vscode/
 task43
-task43.dSYM/
-*.o
 *.out
 *.exe
-.DS_Store
